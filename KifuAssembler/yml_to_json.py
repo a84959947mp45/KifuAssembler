@@ -34,7 +34,7 @@ if __name__ == '__main__':
     
     for i in range(len(data["BatchOfPositions"])):
         #print(data["BatchOfPositions"][i])
-        kifu="(;"
+        kifu="("
         reStore ={}
         last=""
         for j in range (len(data["BatchOfPositions"][i])):
@@ -48,8 +48,8 @@ if __name__ == '__main__':
             
             row = relectRow[int(data["BatchOfPositions"][i][j]/12)]
             col = str(int(data["BatchOfPositions"][i][j]%12))
-            nowPosiiton+=row    
-            nowPosiiton+=col 
+            nowPosiiton+=("["+row)    
+            nowPosiiton+=(col +"]")
             kifu+=nowPosiiton
         kifu+=")"
         reStore["kifu"]=kifu
@@ -59,10 +59,14 @@ if __name__ == '__main__':
         else:
             reStore["game_result"]=last
         
+        reStore["url"]="."
+        
         storeData.append(reStore)
     with open('data.json', 'w') as outfile:
-        for i in storeData:
-            json.dump(storeData, outfile)
+       # json.dump("[\\n", outfile)
+       # for i in storeData:
+        json.dump(storeData, outfile, indent=2)
+       # json.dump("]\\n", outfile)
         
 
 
