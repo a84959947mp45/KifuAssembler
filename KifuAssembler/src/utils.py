@@ -223,22 +223,26 @@ class KifuParser:
         for move in moves:
             role = move[0]
             action_key = move[2:move.index("]")]
-            if role == 'B':
-                if len(KifuParser.table[action_key]) == 2:
-                    i, j = KifuParser.table[action_key]
-                    result.append(BlackMove(i, j))
-                elif len(KifuParser.table[action_key]) == 4:
-                    i1, j1, i2, j2 = KifuParser.table[action_key]
-                    result.append(BlackMove(i1, j1))
-                    result.append(BlackMove(i2, j2))
+            try:
+                if role == 'B':
+                    if len(KifuParser.table[action_key]) == 2:
+                        i, j = KifuParser.table[action_key]
+                        result.append(BlackMove(i, j))
+                    elif len(KifuParser.table[action_key]) == 4:
+                        i1, j1, i2, j2 = KifuParser.table[action_key]
+                        result.append(BlackMove(i1, j1))
+                        result.append(BlackMove(i2, j2))
 
-            elif role == 'W':
-                if len(KifuParser.table[action_key]) == 2:
-                    i, j = KifuParser.table[action_key]
-                    result.append(WhiteMove(i, j))
-                elif len(KifuParser.table[action_key]) == 4:
-                    i1, j1, i2, j2 = KifuParser.table[action_key]
-                    result.append(WhiteMove(i1, j1))
-                    result.append(WhiteMove(i2, j2))
+                elif role == 'W':
+                    if len(KifuParser.table[action_key]) == 2:
+                        i, j = KifuParser.table[action_key]
+                        result.append(WhiteMove(i, j))
+                    elif len(KifuParser.table[action_key]) == 4:
+                        i1, j1, i2, j2 = KifuParser.table[action_key]
+                        result.append(WhiteMove(i1, j1))
+                        result.append(WhiteMove(i2, j2))
+            except:
+                print("XXXXXXXXXxx")
+                print(action_key)
 
         return result
