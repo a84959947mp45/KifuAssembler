@@ -5,7 +5,7 @@ import copy
 from collections import defaultdict, namedtuple
 from itertools import product
 
-GAME_CONFIG = namedtuple("CONNECT_GAME_CONFIG", ['m', 'n', 'k', 'p', 'q'])(19, 19, 6, 1, 2)
+GAME_CONFIG = namedtuple("CONNECT_GAME_CONFIG", ['m', 'n', 'k', 'p', 'q'])(12, 12, 5, 1, 1)
 
 
 class Root:
@@ -114,27 +114,27 @@ def do_nothing(a_move):
 def rotate_90(a_move):
     result = copy.copy(a_move)
     result.i, result.j = a_move.j, a_move.i
-    result.j = 18 - result.j
+    result.j = GAME_CONFIG.m - 1  - result.j
     return result
 
 
 def rotate_180(a_move):
     result = copy.copy(a_move)
-    result.i = 18 - result.i
-    result.j = 18 - result.j
+    result.i = GAME_CONFIG.m - 1- result.i
+    result.j = GAME_CONFIG.m - 1 - result.j
     return result
 
 
 def rotate_270(a_move):
     result = copy.copy(a_move)
     result.i, result.j = result.j, result.i
-    result.i = 18 - result.i
+    result.i = GAME_CONFIG.m - 1 - result.i
     return result
 
 
 def horizontal_reflect(a_move):
     result = copy.copy(a_move)
-    result.j = 18 - result.j
+    result.j = GAME_CONFIG.m - 1 - result.j
     return result
 
 
@@ -148,40 +148,6 @@ def horizontal_reflect_rotate_180(a_move):
 
 def horizontal_reflect_rotate_270(a_move):
     return rotate_270(horizontal_reflect(a_move))
-
-
-def build_symmetric_lookup_table():
-    symmetric_lookup = defaultdict(list)
-
-    for x in range(9, -1, -1):
-        for y in range(x, -1, -1):
-            bm = BlackMove(x, y)
-
-            new_bm = horizontal_reflect_rotate_270(bm)
-            symmetric_lookup[(new_bm.i, new_bm.j)].append(horizontal_reflect_rotate_270)
-
-            new_bm = horizontal_reflect_rotate_180(bm)
-            symmetric_lookup[(new_bm.i, new_bm.j)].append(horizontal_reflect_rotate_180)
-
-            new_bm = horizontal_reflect_rotate_90(bm)
-            symmetric_lookup[(new_bm.i, new_bm.j)].append(horizontal_reflect_rotate_90)
-
-            new_bm = horizontal_reflect(bm)
-            symmetric_lookup[(new_bm.i, new_bm.j)].append(horizontal_reflect)
-
-            new_bm = rotate_270(bm)
-            symmetric_lookup[(new_bm.i, new_bm.j)].append(rotate_90)
-
-            new_bm = rotate_180(bm)
-            symmetric_lookup[(new_bm.i, new_bm.j)].append(rotate_180)
-
-            new_bm = rotate_90(bm)
-            symmetric_lookup[(new_bm.i, new_bm.j)].append(rotate_270)
-
-            new_bm = do_nothing(bm)
-            symmetric_lookup[(new_bm.i, new_bm.j)].append(do_nothing)
-
-    return symmetric_lookup
 
 
 def all_possible_actions() -> list:
@@ -201,20 +167,23 @@ class KifuParser:
     """
     table = {}
 
-    for i, j in product("abcdefghijklmnopqrs", range(1, 20)):
+    for i, j in product("abcdefghijklmnopqrs", range(1, 13)):
         table[f"{i}{j}"] = ("abcdefghijklmnopqrs".index(i), j - 1)
 
     for i, j in product("abcdefghijklmnopqrs", "abcdefghijklmnopqrs"):
         table[f"{i}{j}"] = ("abcdefghijklmnopqrs".index(i), "abcdefghijklmnopqrs".index(j))
+    
+    for i, j in product("ABCDEFGHIJKLMNOPQRS", "ABCDEFGHIJKLMNOPQRS"):
+        table[f"{i}{j}"] = ("ABCDEFGHIJKLMNOPQRS".index(i), "ABCDEFGHIJKLMNOPQRS".index(j))
 
-    for i, j, i2, j2 in product("abcdefghijklmnopqrs", range(1, 20), "abcdefghijklmnopqrs", range(1, 20)):
+    for i, j, i2, j2 in product("abcdefghijklmnopqrs", range(1, 13), "abcdefghijklmnopqrs", range(1, 13)):
         table[f"{i}{j}{i2}{j2}"] = \
             ("abcdefghijklmnopqrs".index(i), j - 1, "abcdefghijklmnopqrs".index(i2), j2 - 1)
 
     @staticmethod
     def parse(content: str):
         # Split content by ';' and discard the element if it is empty.
-        moves = [e for e in content[1:-1].split(';') if e]
+        moves = [e for e in content[0:-1].split(';') if e]
         moves.pop(0)
 
         result = []
@@ -223,26 +192,23 @@ class KifuParser:
         for move in moves:
             role = move[0]
             action_key = move[2:move.index("]")]
-            try:
-                if role == 'B':
-                    if len(KifuParser.table[action_key]) == 2:
-                        i, j = KifuParser.table[action_key]
-                        result.append(BlackMove(i, j))
-                    elif len(KifuParser.table[action_key]) == 4:
-                        i1, j1, i2, j2 = KifuParser.table[action_key]
-                        result.append(BlackMove(i1, j1))
-                        result.append(BlackMove(i2, j2))
+            if role == 'B':
+                if len(KifuParser.table[action_key]) == 2:
+                    i, j = KifuParser.table[action_key]
+                    result.append(BlackMove(i, j))
+                elif len(KifuParser.table[action_key]) == 4:
+                    i1, j1, i2, j2 = KifuParser.table[action_key]
+                    result.append(BlackMove(i1, j1))
+                    result.append(BlackMove(i2, j2))
 
-                elif role == 'W':
-                    if len(KifuParser.table[action_key]) == 2:
-                        i, j = KifuParser.table[action_key]
-                        result.append(WhiteMove(i, j))
-                    elif len(KifuParser.table[action_key]) == 4:
-                        i1, j1, i2, j2 = KifuParser.table[action_key]
-                        result.append(WhiteMove(i1, j1))
-                        result.append(WhiteMove(i2, j2))
-            except:
-                print("XXXXXXXXXxx")
-                print(action_key)
+            elif role == 'W':
+                if len(KifuParser.table[action_key]) == 2:
+                    i, j = KifuParser.table[action_key]
+                    result.append(WhiteMove(i, j))
+                elif len(KifuParser.table[action_key]) == 4:
+                    i1, j1, i2, j2 = KifuParser.table[action_key]
+                    result.append(WhiteMove(i1, j1))
+                    result.append(WhiteMove(i2, j2))
+           
 
         return result

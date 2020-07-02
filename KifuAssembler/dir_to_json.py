@@ -33,7 +33,16 @@ if __name__ == '__main__':
                 elif sgf.stem[-4::] == "Draw":
                     result.append({"kifu": text, "url": "", "game_result": "Draw"})
             else:
-                result.append({"kifu": sgf.read_text(), "url": "", "game_result": "None"})
+                if(len(sgf.read_text())>9400):
+                    result.append({"kifu": sgf.read_text(), "url": "", "game_result": "Draw"})
+                elif(sgf.read_text()[-65]=='W'):
+                    result.append({"kifu": sgf.read_text(), "url": "", "game_result": "WWin"})
+                elif(sgf.read_text()[-65]=='B'):
+                    result.append({"kifu": sgf.read_text(), "url": "", "game_result": "BWin"})
+                elif(sgf.read_text()[-63]=='W'):
+                    result.append({"kifu": sgf.read_text(), "url": "", "game_result": "WWin"})
+                elif(sgf.read_text()[-63]=='B'):
+                    result.append({"kifu": sgf.read_text(), "url": "", "game_result": "BWin"})
 
     with (pathlib.Path(args.output_directory) / args.name).open("w") as json_file:
         json.dump(result, json_file, indent=4)
