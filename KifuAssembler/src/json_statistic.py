@@ -3,37 +3,23 @@ import argparse
 import os
 import tqdm
 import numpy as np
+import matplotlib.pyplot as plt
 from KifuAssembler.src.extractor import Extractor
 from KifuAssembler.src.assembler import Assembler, dump_to
 from KifuAssembler.src.utils import KifuParser
 
 parser = argparse.ArgumentParser(description="Assemble kifus to a kifu tree.")
 
-parser.add_argument('json_src',
+parser.add_argument('--json_src',
     type=str,
     help="The source 'json' path to extract kifu from."
+    default="dataInput/96x10_before_1033_1w.json"
 )
 
-parser.add_argument('output_file',
+parser.add_argument('--output_file',
     type=str,
     help="The location to output the assembled tree.",
     default="results/result.sgf"
-)
-
-parser.add_argument('-s', '--enable_symmetrical_assembling',
-    action='store_true',
-    help="View symmetrical sgfs as the same."
-)
-
-parser.add_argument('-l', '--lower_bound',
-    type=int,
-    default=5,
-    help="Ignore moves which has length smaller than this flag."
-)
-
-parser.add_argument('--use_editor_style',
-    action='store_true',
-    help="Use connect6 rule when dumping tree. (I.e., (W0, W1) and (W1, W0) are considered interchangeable.)"
 )
 
 parser.add_argument('-f','--use_filter',
@@ -46,6 +32,7 @@ parser.add_argument('--num_of_openings',
     default=0,
     help="Get common openings from the assembled tree and dump them to 'openings.txt'"
 )
+
 
 nearPosition=[[0,1],[0,-1],[1,0],[-1,0],
               [1,1],[1,-1],[-1,1],[-1,-1],
@@ -75,6 +62,9 @@ if __name__ == '__main__':
         number_of_skipped_moves = 0
         count=0
         
+        total_len = 0
+        whole_infro= np.zero([15,2])
+        if()
         for kifu, url, game_results in zip(kifus, urls, game_results):
             # Use Kifuparser to parse the raw string into sequence of move
             moves = KifuParser.parse(kifu)
@@ -82,6 +72,10 @@ if __name__ == '__main__':
             board = np.zeros([15,15])
             first = True
             canPaint = False
+
+            
+
+
             #if we need to filter
             if(args.use_filter):
                 for step in range(len(moves)):
@@ -98,12 +92,13 @@ if __name__ == '__main__':
                                     break
                         if(not canPaint):
                             #print("the episode droupout")
+                            print(str(moves[step].i)+" "+str(moves[step].j)) 
                             count+=1
                             break
                     first = False
                     board[moves[step].i][moves[step].j]=(step%2)+1
                 if(not canPaint):
-                   pbar.update(1)
+                   print(moves) 
                    continue
 
 

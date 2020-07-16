@@ -8,6 +8,7 @@
 import pathlib
 import argparse
 import json
+import numpy as np
 
 parser = argparse.ArgumentParser()
 parser.add_argument("input_directory", help="The directory that stores sgf files.")
@@ -25,7 +26,7 @@ if __name__ == '__main__':
         with sgf.open('r') as f:
             if args.czf:
                 text = sgf.read_text()
-
+                
                 if sgf.stem[-8::] == "BlackWin":
                     result.append({"kifu": text, "url": "", "game_result": "BWin"})
                 elif sgf.stem[-8::] == "WhiteWin":
@@ -33,16 +34,16 @@ if __name__ == '__main__':
                 elif sgf.stem[-4::] == "Draw":
                     result.append({"kifu": text, "url": "", "game_result": "Draw"})
             else:
+
+                infro =np.array( sgf.read_text().split(';') )
+                win_side =infro[:][-1][0]
                 if(len(sgf.read_text())>9400):
                     result.append({"kifu": sgf.read_text(), "url": "", "game_result": "Draw"})
-                elif(sgf.read_text()[-65]=='W'):
+                elif(win_side=='W'):
                     result.append({"kifu": sgf.read_text(), "url": "", "game_result": "WWin"})
-                elif(sgf.read_text()[-65]=='B'):
+                elif(win_side=='B'):
                     result.append({"kifu": sgf.read_text(), "url": "", "game_result": "BWin"})
-                elif(sgf.read_text()[-63]=='W'):
-                    result.append({"kifu": sgf.read_text(), "url": "", "game_result": "WWin"})
-                elif(sgf.read_text()[-63]=='B'):
-                    result.append({"kifu": sgf.read_text(), "url": "", "game_result": "BWin"})
+ 
 
     with (pathlib.Path(args.output_directory) / args.name).open("w") as json_file:
         json.dump(result, json_file, indent=4)

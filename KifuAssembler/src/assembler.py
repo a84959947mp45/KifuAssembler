@@ -21,7 +21,19 @@ def detailed_str(a_node: AnyNode):
                     a_node.bwin + a_node.wwin + a_node.draw)),
             '3.2f'
         )
+        Black_win_rate = format(
+            100 * ((a_node.bwin) / (
+                    a_node.bwin + a_node.wwin + a_node.draw)),
+            '3.2f'
+        )
+        Draw_rate = format(
+            100 * ((a_node.draw) / (
+                    a_node.bwin + a_node.wwin + a_node.draw)),
+            '3.2f'
+        )
         result += f"WinRate     = {win_rate}%\n"
+        result += f"BlackWinRate     = {Black_win_rate}%\n"
+        result += f"DrawWinRate     = {Draw_rate }%\n"
 
     elif isinstance(a_node.data, WhiteMove):
         win_rate = format(
@@ -29,7 +41,19 @@ def detailed_str(a_node: AnyNode):
                     a_node.bwin + a_node.wwin + a_node.draw)),
             '3.2f'
         )
+        White_win_rate = format(
+            100 * ((a_node.wwin) / (
+                    a_node.bwin + a_node.wwin + a_node.draw)),
+            '3.2f'
+        )
+        Draw_rate = format(
+            100 * ((a_node.draw) / (
+                    a_node.bwin + a_node.wwin + a_node.draw)),
+            '3.2f'
+        )
         result += f"WinRate     = {win_rate}%\n"
+        result += f"WhiteWinRate     = {White_win_rate}%\n"
+        result += f"DrawWinRate     = {Draw_rate }%\n"
 
     if a_node.urls and a_node.is_terminate_node:
         result += f"Game urls   = "

@@ -167,7 +167,7 @@ class KifuParser:
     """
     table = {}
 
-    for i, j in product("abcdefghijklmnopqrs", range(1, 13)):
+    for i, j in product("abcdefghijklmnopqrs", range(1, 16)):
         table[f"{i}{j}"] = ("abcdefghijklmnopqrs".index(i), j - 1)
 
     for i, j in product("abcdefghijklmnopqrs", "abcdefghijklmnopqrs"):
@@ -176,7 +176,7 @@ class KifuParser:
     for i, j in product("ABCDEFGHIJKLMNOPQRS", "ABCDEFGHIJKLMNOPQRS"):
         table[f"{i}{j}"] = ("ABCDEFGHIJKLMNOPQRS".index(i), "ABCDEFGHIJKLMNOPQRS".index(j))
 
-    for i, j, i2, j2 in product("abcdefghijklmnopqrs", range(1, 13), "abcdefghijklmnopqrs", range(1, 13)):
+    for i, j, i2, j2 in product("abcdefghijklmnopqrs", range(1, 16), "abcdefghijklmnopqrs", range(1, 16)):
         table[f"{i}{j}{i2}{j2}"] = \
             ("abcdefghijklmnopqrs".index(i), j - 1, "abcdefghijklmnopqrs".index(i2), j2 - 1)
 
